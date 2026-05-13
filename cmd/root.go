@@ -15,13 +15,10 @@ import (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "winebox",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Create, delete and manage your WinePrefixes, generating .desktop files for your installing apps",
+	Long: `Winebox is a command-line interface (CLI) that allows you to create, delete, and manage WinePrefixes, enabling you to handle multiple installations for each application.
+	
+	Its correct use is to create a WinePrefix for each application you install. It will then create ".desktop" files that you can view in your preferred startup menu.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
