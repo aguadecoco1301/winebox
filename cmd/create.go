@@ -10,26 +10,26 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// helloCmd represents the hello command
-var helloCmd = &cobra.Command{
-	Use:   "hello",
-	Short: "Hello World",
-	Long: `Displays "Hello World"`,
+// createCmd represents the create command
+var createCmd = &cobra.Command{
+	Use:   "create",
+	Short: "Creates a new WinePrefix",
+	Long: `Creates a new WinePrefix.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Hello World!")
+		fmt.Println("create called")
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(helloCmd)
+	rootCmd.AddCommand(createCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// helloCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// createCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// helloCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// createCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
