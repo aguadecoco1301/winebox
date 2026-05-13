@@ -1,7 +1,11 @@
+/*
+Copyright © 2026 NAME HERE <EMAIL ADDRESS>
+
+*/
 package main
 
-import "fmt"
+import "github.com/aguadecoco1301/winebox/cmd"
 
 func main() {
-	fmt.Println("Hola mundo!")
+	cmd.Execute()
 }
