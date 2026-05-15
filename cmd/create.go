@@ -6,8 +6,12 @@ package cmd
 import (
 	"fmt"
 	"strings"
+	"unicode"
 
 	"github.com/spf13/cobra"
+	"golang.org/x/text/runes"
+	"golang.org/x/text/transform"
+	"golang.org/x/text/unicode/norm"
 )
 
 // createCmd represents the create command
@@ -17,16 +21,22 @@ var createCmd = &cobra.Command{
 	Long:  `Creates a new WinePrefix. The correct way to use it is to create a WinePrefix for each application you install.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		prefixName := strings.Join(args, " ")
+
+		// Remueve los acentos.
+		t := transform.Chain( //transform es que siga los pasos en ese orden. Función interesante
+			norm.NFD,                           // Descompone los caracteres con sus diacríticos (ej. e + ´)
+			runes.Remove(runes.In(unicode.Mn)), // Remueve los diacríticos
+			norm.NFC,                           // Recompone los caracteres
+		)
+		prefixName, _, _ = transform.String(t, prefixName) // Aplica la transformación y descarta numero y error
+
 		var suggestedName string
 		var isUsedCorrectCharacters bool = true
 
-		//TODO: gestionar el nombre (args). Solo alfabeto, - y ., flag para cancelarlo
-		// - Recorrer caracter por caracter (args)
 		flags, err := cmd.Flags().GetBool("allow-unsafe-name")
 		if err != nil {
 			fmt.Println("Error: ", err)
 		}
-		fmt.Println(flags)
 
 		if flags == false {
 			isAllowedCharacters := func(r byte) bool {
@@ -54,10 +64,10 @@ var createCmd = &cobra.Command{
 		if isUsedCorrectCharacters {
 			fmt.Println("New prefix: ", suggestedName) // Reemplazo de la creación del prefix
 		} else {
-			if suggestedName != "" {
+			if suggestedName != "" && len(suggestedName) >= 2 {
 				fmt.Println("ERROR: You entered an unsafe name. No action will be taken.\nIf you know what you are doing, check 'winebox create --help'.\nSuggested safe name:\n", suggestedName)
 			} else {
-				fmt.Println("ERROR: You entered an unsafe name. No action will be taken.\nIf you know what you are doing, check 'winebox create --help'.\nPlease use letters, numbers, '-' or '.'.")
+				fmt.Println("ERROR: You entered an unsafe name. No action will be taken.\nIf you know what you are doing, check 'winebox create --help'.\nPlease use at least two of letters, numbers, '-' or '.'. ")
 			}
 		}
 	},
