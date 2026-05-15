@@ -8,6 +8,9 @@ Copyright © 2026 ADRIEL ULLOA <adrielalejoulloa@gmail.com>
 package cmd
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/spf13/cobra"
 )
 
@@ -32,6 +35,20 @@ var appMainCmd = &cobra.Command{
 	Long: `Defines the default executable that will be launched when no
 application name is provided in 'winebox run'.`,
 	Args: cobra.ExactArgs(2),
+	Run: func(cmd *cobra.Command, args []string) {
+		prefixName := args[0]
+		mainPath := args[1]
+
+		if strings.TrimSpace(mainPath) == "" {
+			fmt.Println("ERROR: path cannot be empty")
+			cmd.Help()
+			return
+		}
+
+		fmt.Println("Setting main app for prefix:", prefixName)
+		fmt.Println("Main executable:", mainPath)
+
+	},
 }
 
 var appAddCmd = &cobra.Command{
