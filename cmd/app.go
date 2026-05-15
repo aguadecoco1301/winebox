@@ -26,6 +26,14 @@ Each prefix can contain multiple applications with one designated as main.`,
 	},
 }
 
+var appMainCmd = &cobra.Command{
+	Use:   "main <prefix> <path>",
+	Short: "Set the main application for a prefix",
+	Long: `Defines the default executable that will be launched when no
+application name is provided in 'winebox run'.`,
+	Args: cobra.ExactArgs(2),
+}
+
 var appAddCmd = &cobra.Command{
 	Use:   "add <prefix> <name> <path>",
 	Short: "Add a new application to a prefix",
@@ -45,14 +53,6 @@ You can change both the alias name and the executable path.`,
 	Args: cobra.ExactArgs(4),
 }
 
-var appMainCmd = &cobra.Command{
-	Use:   "main <prefix> <path>",
-	Short: "Set the main application for a prefix",
-	Long: `Defines the default executable that will be launched when no
-application name is provided in 'winebox run'.`,
-	Args: cobra.ExactArgs(2),
-}
-
 var appDeleteCmd = &cobra.Command{
 	Use:   "delete <prefix> <name>",
 	Short: "Delete an application from a prefix",
@@ -66,8 +66,8 @@ It does NOT delete the prefix itself.`,
 func init() {
 	rootCmd.AddCommand(appCmd)
 
+	appCmd.AddCommand(appMainCmd)
 	appCmd.AddCommand(appAddCmd)
 	appCmd.AddCommand(appEditCmd)
-	appCmd.AddCommand(appMainCmd)
 	appCmd.AddCommand(appDeleteCmd)
 }
