@@ -27,8 +27,8 @@ func CreatePrefix(name string) error {
 	prefixDir := filepath.Join(wineboxDir, "prefixes", name)
 
 	// Verificar si existe
-	_, err := os.Stat(filepath.Join(prefixDir, "config.json"))
-	if err == nil { // No devuelve error si el archivo existe
+	_, err := os.Stat(filepath.Join(prefixDir, configFileName))
+	if err == nil {
 		return fmt.Errorf("prefix already exists")
 	}
 
@@ -54,7 +54,7 @@ func CreatePrefix(name string) error {
 	}
 
 	winePrefixDir := filepath.Join(prefixDir, "prefix")
-
+	os.MkdirAll(winePrefixDir, 0775)
 	wineCmd := exec.Command("wineboot")
 
 	wineCmd.Env = append(
@@ -69,7 +69,7 @@ func CreatePrefix(name string) error {
 	if err != nil {
 		return err
 	}
-
+	// TODO: Eliminar archivos si wineboot falla
 	fmt.Println("Created prefix:", name)
 	return nil
 }
