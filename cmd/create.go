@@ -12,6 +12,8 @@ import (
 	"golang.org/x/text/runes"
 	"golang.org/x/text/transform"
 	"golang.org/x/text/unicode/norm"
+
+	"github.com/aguadecoco1301/winebox/internal/prefix"
 )
 
 // createCmd represents the create command
@@ -63,6 +65,7 @@ var createCmd = &cobra.Command{
 
 		if isUsedCorrectCharacters {
 			fmt.Println("New prefix: ", suggestedName) // Reemplazo de la creación del prefix
+			prefix.CreatePrefix(suggestedName)
 		} else {
 			if suggestedName != "" && len(suggestedName) >= 2 {
 				fmt.Println("ERROR: You entered an unsafe name. No action will be taken.\nIf you know what you are doing, check 'winebox create --help'.\nSuggested safe name:\n", suggestedName)
