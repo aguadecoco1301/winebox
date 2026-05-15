@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"os/exec"
 
 	"path/filepath"
 
@@ -23,8 +24,15 @@ const configFileName = "config.json"
 // Archivos: 	0664 rw- | rw- | r--
 
 func CreatePrefix(name string) error {
-	prefixDir := filepath.Join(wineboxDir, name)
-	err := os.MkdirAll(prefixDir, 0775)
+	prefixDir := filepath.Join(wineboxDir, "prefixes", name)
+
+	// TODO: Verificar si existe
+	existent, err := os.ReadFile(filepath.Join(prefixDir, "config.json"))
+	if len(existent) > 0 {
+		return fmt.Errorf("File exists")
+	}
+
+	err = os.MkdirAll(prefixDir, 0775)
 	if err != nil {
 		return err
 	}
@@ -41,6 +49,23 @@ func CreatePrefix(name string) error {
 	}
 
 	err = os.WriteFile(filepath.Join(prefixDir, configFileName), jsonData, 0664)
+	if err != nil {
+		return err
+	}
+
+	winePrefixDir := filepath.Join(prefixDir, "prefix")
+
+	wineCmd := exec.Command("wineboot")
+
+	wineCmd.Env = append(
+		os.Environ(),
+		"WINEPREFIX="+winePrefixDir,
+	)
+
+	wineCmd.Stdout = os.Stdout //
+	wineCmd.Stderr = os.Stderr // Para que wineboot no corra de forma silenciosa
+
+	err = wineCmd.Run()
 	if err != nil {
 		return err
 	}
