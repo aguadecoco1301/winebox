@@ -26,10 +26,10 @@ const configFileName = "config.json"
 func CreatePrefix(name string) error {
 	prefixDir := filepath.Join(wineboxDir, "prefixes", name)
 
-	// TODO: Verificar si existe
-	existent, err := os.ReadFile(filepath.Join(prefixDir, "config.json"))
-	if len(existent) > 0 {
-		return fmt.Errorf("File exists")
+	// Verificar si existe
+	_, err := os.Stat(filepath.Join(prefixDir, "config.json"))
+	if err == nil { // No devuelve error si el archivo existe
+		return fmt.Errorf("Prefix already exists")
 	}
 
 	err = os.MkdirAll(prefixDir, 0775)
