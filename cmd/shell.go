@@ -53,8 +53,9 @@ For daily usage of installed applications, prefer 'winebox run'.`,
 		cmdShell.Stdout = os.Stdout
 		cmdShell.Stderr = os.Stderr
 
-		fmt.Println("Entering Wine shell:", prefixName)
+		fmt.Println("Entering Wineprefix shell:", prefixName)
 		fmt.Printf("To exit Wine shell use 'exit'.\n\n")
+		fmt.Printf("Executing:\n> %s\n\n", cmdShell)
 
 		err := cmdShell.Run()
 

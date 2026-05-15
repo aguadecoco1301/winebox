@@ -65,7 +65,7 @@ func CreatePrefix(name string) error {
 	wineCmd.Stdout = os.Stdout //
 	wineCmd.Stderr = os.Stderr // Para que wineboot no corra de forma silenciosa
 
-	fmt.Println("Running:", wineCmd)
+	fmt.Printf("Executing:\n> %s\n\n", wineCmd)
 	err = wineCmd.Run()
 	if err != nil {
 		os.RemoveAll(prefixDir) // Rara vez funcionará. Solo cuando Wine cierre con un error, lo cual no suele ocurrir en un wineboot
