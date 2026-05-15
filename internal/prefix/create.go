@@ -4,14 +4,19 @@ Copyright © 2026 ADRIEL ULLOA <adrielalejoulloa@gmail.com>
 package prefix
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 
 	"path/filepath"
+
+	"github.com/aguadecoco1301/winebox/internal/version"
 )
 
 var home, _ = os.UserHomeDir()
 var wineboxDir = filepath.Join(home, ".winebox")
+
+const configFileName = "config.json"
 
 // https://chmod-calculator.com/
 // Directorios:	0775 rwx | rwx | r-x
@@ -23,7 +28,15 @@ func CreatePrefix(name string) error {
 	if err != nil {
 		return err
 	}
-	os.WriteFile(filepath.Join(prefixDir, "config.json"), []byte(name), 0664)
+
+	config := Config{
+		Name:    name,
+		Version: version.Version,
+	}
+
+	jsonData, err := json.MarshalIndent(config, "", "    ")
+
+	os.WriteFile(filepath.Join(prefixDir, configFileName), jsonData, 0664)
 	fmt.Println("Created prefix:", name)
 	return nil
 }
