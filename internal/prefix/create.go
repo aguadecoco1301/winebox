@@ -29,7 +29,7 @@ func CreatePrefix(name string) error {
 	// Verificar si existe
 	_, err := os.Stat(filepath.Join(prefixDir, "config.json"))
 	if err == nil { // No devuelve error si el archivo existe
-		return fmt.Errorf("Prefix already exists")
+		return fmt.Errorf("prefix already exists")
 	}
 
 	err = os.MkdirAll(prefixDir, 0775)

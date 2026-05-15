@@ -37,7 +37,7 @@ var createCmd = &cobra.Command{
 
 		flags, err := cmd.Flags().GetBool("allow-unsafe-name")
 		if err != nil {
-			fmt.Println("Error: ", err)
+			fmt.Println("Error:", err)
 		}
 
 		if flags == false {
@@ -67,7 +67,7 @@ var createCmd = &cobra.Command{
 			fmt.Println("New prefix: ", suggestedName) // Reemplazo de la creación del prefix
 			err := prefix.CreatePrefix(suggestedName)
 			if err != nil {
-				fmt.Println("ERROR: Failed to create prefix: ", err)
+				fmt.Println("ERROR: Failed to create prefix:", err)
 			}
 		} else {
 			if suggestedName != "" && len(suggestedName) >= 2 {
