@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func filePath(prefixDir string) string {
@@ -148,7 +149,7 @@ func (d Data) GetMainApp() (App, error) {
 }
 
 func (d Data) Resolve(name string) (App, error) {
-	if name == "" {
+	if strings.TrimSpace(name) == "" {
 		return d.GetMainApp()
 	}
 
