@@ -68,9 +68,10 @@ func CreatePrefix(name string) error {
 	fmt.Println("Running:", wineCmd)
 	err = wineCmd.Run()
 	if err != nil {
+		os.RemoveAll(prefixDir) // Rara vez funcionará. Solo cuando Wine cierre con un error, lo cual no suele ocurrir en un wineboot
 		return err
 	}
-	// TODO: Eliminar archivos si wineboot falla
+
 	fmt.Println("Created prefix:", name)
 	return nil
 }
