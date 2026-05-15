@@ -5,7 +5,7 @@ package cmd
 
 import (
 	"fmt"
-	"strings"
+	"path/filepath"
 	"unicode"
 
 	"github.com/spf13/cobra"
@@ -18,11 +18,18 @@ import (
 
 // createCmd represents the create command
 var createCmd = &cobra.Command{
-	Use:   "create",
+	Use:   "create <prefix-name>",
 	Short: "Creates a new WinePrefix",
 	Long:  `Creates a new WinePrefix. The correct way to use it is to create a WinePrefix for each application you install.`,
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		prefixName := strings.Join(args, " ")
+		prefixName := args[0]
+		prefixName = filepath.Base(prefixName)
+
+		if prefixName == "." || prefixName == ".." {
+			fmt.Println("ERROR: invalid prefix name")
+			return
+		}
 
 		// Remueve los acentos.
 		t := transform.Chain( //transform es que siga los pasos en ese orden. Función interesante
