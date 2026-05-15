@@ -64,7 +64,7 @@ var createCmd = &cobra.Command{
 		}
 
 		if isUsedCorrectCharacters {
-			fmt.Println("New prefix: ", suggestedName) // Reemplazo de la creación del prefix
+			fmt.Println("Creating new prefix:", suggestedName) // Reemplazo de la creación del prefix
 			err := prefix.CreatePrefix(suggestedName)
 			if err != nil {
 				fmt.Println("ERROR: Failed to create prefix:", err)

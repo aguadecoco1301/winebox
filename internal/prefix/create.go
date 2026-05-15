@@ -65,6 +65,7 @@ func CreatePrefix(name string) error {
 	wineCmd.Stdout = os.Stdout //
 	wineCmd.Stderr = os.Stderr // Para que wineboot no corra de forma silenciosa
 
+	fmt.Println("Running:", wineCmd)
 	err = wineCmd.Run()
 	if err != nil {
 		return err
