@@ -32,6 +32,7 @@ func CreatePrefix(name string) error {
 	config := Config{
 		Name:    name,
 		Version: version.Version,
+		Comment: "It is recommended to modify this file using Winebox instead of manual editing.",
 	}
 
 	jsonData, err := json.MarshalIndent(config, "", "    ")
