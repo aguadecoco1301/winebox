@@ -7,6 +7,7 @@ package cmd
 
 import (
 	"fmt"
+	"path/filepath"
 
 	"github.com/aguadecoco1301/winebox/internal/appstore"
 	"github.com/aguadecoco1301/winebox/internal/prefix"
@@ -37,9 +38,15 @@ var appMainCmd = &cobra.Command{
 		prefixName := args[0]
 		appPath := args[1]
 
+		absPath, err := filepath.Abs(appPath)
+		if err != nil {
+			return
+		}
+		absPath = filepath.Clean(absPath)
+
 		prefixPath := prefix.Path(prefixName)
 
-		err := appstore.SetMain(prefixPath, appPath)
+		err = appstore.SetMain(prefixPath, absPath)
 		if err != nil {
 			fmt.Println("ERROR:", err)
 			return
@@ -62,9 +69,15 @@ The <path> is the executable path inside the prefix or relative to it.`,
 		appName := args[1]
 		appPath := args[2]
 
+		absPath, err := filepath.Abs(appPath)
+		if err != nil {
+			return
+		}
+		absPath = filepath.Clean(absPath)
+
 		prefixPath := prefix.Path(prefixName)
 
-		err := appstore.AddApp(prefixPath, appName, appPath)
+		err = appstore.AddApp(prefixPath, appName, absPath)
 		if err != nil {
 			fmt.Println("ERROR:", err)
 			return
@@ -89,7 +102,13 @@ You can change both the alias name and the executable path.`,
 
 		prefixPath := prefix.Path(prefixName)
 
-		err := appstore.EditApp(prefixPath, oldName, newName, newPath)
+		absPath, err := filepath.Abs(newPath)
+		if err != nil {
+			return
+		}
+		absPath = filepath.Clean(absPath)
+
+		err = appstore.EditApp(prefixPath, oldName, newName, absPath)
 		if err != nil {
 			fmt.Println("ERROR:", err)
 			return

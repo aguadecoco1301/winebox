@@ -89,11 +89,12 @@ func DeleteApp(prefixDir, name string) error {
 		return err
 	}
 
-	delete(data.Apps, name)
-
-	if data.Main == name {
-		data.Main = ""
+	_, ok := data.Apps[name]
+	if !ok {
+		return fmt.Errorf("app not found: %s", name)
 	}
+
+	delete(data.Apps, name)
 
 	return Save(prefixDir, data)
 }
@@ -140,7 +141,7 @@ func EditApp(prefixDir, oldName, newName, newPath string) error {
 
 func (d Data) GetMainApp() (App, error) {
 	if d.Main == "" {
-		return App{}, fmt.Errorf("no main app defined")
+		return App{}, fmt.Errorf("no main app defined. try 'winebox app main'")
 	}
 
 	return App{Path: d.Main}, nil
