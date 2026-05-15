@@ -36,8 +36,15 @@ func CreatePrefix(name string) error {
 	}
 
 	jsonData, err := json.MarshalIndent(config, "", "    ")
+	if err != nil {
+		return err
+	}
 
-	os.WriteFile(filepath.Join(prefixDir, configFileName), jsonData, 0664)
+	err = os.WriteFile(filepath.Join(prefixDir, configFileName), jsonData, 0664)
+	if err != nil {
+		return err
+	}
+
 	fmt.Println("Created prefix:", name)
 	return nil
 }
