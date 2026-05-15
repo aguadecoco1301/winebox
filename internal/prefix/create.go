@@ -17,9 +17,13 @@ var wineboxDir = filepath.Join(home, ".winebox")
 // Directorios:	0775 rwx | rwx | r-x
 // Archivos: 	0664 rw- | rw- | r--
 
-func CreatePrefix(name string) {
+func CreatePrefix(name string) error {
 	prefixDir := filepath.Join(wineboxDir, name)
-	os.MkdirAll(prefixDir, 0775)
+	err := os.MkdirAll(prefixDir, 0775)
+	if err != nil {
+		return err
+	}
 	os.WriteFile(filepath.Join(prefixDir, "config.json"), []byte(name), 0664)
 	fmt.Println("Created prefix:", name)
+	return nil
 }

@@ -65,7 +65,10 @@ var createCmd = &cobra.Command{
 
 		if isUsedCorrectCharacters {
 			fmt.Println("New prefix: ", suggestedName) // Reemplazo de la creación del prefix
-			prefix.CreatePrefix(suggestedName)
+			err := prefix.CreatePrefix(suggestedName)
+			if err != nil {
+				fmt.Println("ERROR: Failed to create prefix: ", err)
+			}
 		} else {
 			if suggestedName != "" && len(suggestedName) >= 2 {
 				fmt.Println("ERROR: You entered an unsafe name. No action will be taken.\nIf you know what you are doing, check 'winebox create --help'.\nSuggested safe name:\n", suggestedName)
