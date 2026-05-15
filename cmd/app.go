@@ -2,15 +2,14 @@
 Copyright © 2026 ADRIEL ULLOA <adrielalejoulloa@gmail.com>
 */
 
-// winebox app add program map PATH
-// winebox app main program PATH
-// winebox app edit program subprogram NEW_NAME NEW_PATH
+// winebox app list
 package cmd
 
 import (
 	"fmt"
-	"strings"
 
+	"github.com/aguadecoco1301/winebox/internal/appstore"
+	"github.com/aguadecoco1301/winebox/internal/prefix"
 	"github.com/spf13/cobra"
 )
 
@@ -32,22 +31,21 @@ Each prefix can contain multiple applications with one designated as main.`,
 var appMainCmd = &cobra.Command{
 	Use:   "main <prefix> <path>",
 	Short: "Set the main application for a prefix",
-	Long: `Defines the default executable that will be launched when no
-application name is provided in 'winebox run'.`,
-	Args: cobra.ExactArgs(2),
+	Long:  `Defines which registered application will be used as default when running 'winebox run'.`,
+	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		prefixName := args[0]
-		mainPath := args[1]
+		appPath := args[1]
 
-		if strings.TrimSpace(mainPath) == "" {
-			fmt.Println("ERROR: path cannot be empty")
-			cmd.Help()
+		prefixPath := prefix.Path(prefixName)
+
+		err := appstore.SetMain(prefixPath, appPath)
+		if err != nil {
+			fmt.Println("ERROR:", err)
 			return
 		}
 
-		fmt.Println("Setting main app for prefix:", prefixName)
-		fmt.Println("Main executable:", mainPath)
-
+		fmt.Println("Main set for prefix:", prefixName)
 	},
 }
 
@@ -59,15 +57,46 @@ var appAddCmd = &cobra.Command{
 The <name> is an alias used later with 'winebox run'.
 The <path> is the executable path inside the prefix or relative to it.`,
 	Args: cobra.ExactArgs(3),
+	Run: func(cmd *cobra.Command, args []string) {
+		prefixName := args[0]
+		appName := args[1]
+		appPath := args[2]
+
+		prefixPath := prefix.Path(prefixName)
+
+		err := appstore.AddApp(prefixPath, appName, appPath)
+		if err != nil {
+			fmt.Println("ERROR:", err)
+			return
+		}
+
+		fmt.Println("App added:", appName)
+	},
 }
 
 var appEditCmd = &cobra.Command{
-	Use:   "edit <prefix> <name> <new-name> <new-path>",
+	Use:   "edit <prefix> <old-name> <new-name> <new-path>",
 	Short: "Edit an existing application entry",
 	Long: `Modifies an existing application inside a Wine prefix.
 
 You can change both the alias name and the executable path.`,
 	Args: cobra.ExactArgs(4),
+	Run: func(cmd *cobra.Command, args []string) {
+		prefixName := args[0]
+		oldName := args[1]
+		newName := args[2]
+		newPath := args[3]
+
+		prefixPath := prefix.Path(prefixName)
+
+		err := appstore.EditApp(prefixPath, oldName, newName, newPath)
+		if err != nil {
+			fmt.Println("ERROR:", err)
+			return
+		}
+
+		fmt.Println("App updated:", oldName)
+	},
 }
 
 var appDeleteCmd = &cobra.Command{
@@ -78,6 +107,20 @@ var appDeleteCmd = &cobra.Command{
 This only deletes the application entry from the registry.
 It does NOT delete the prefix itself.`,
 	Args: cobra.ExactArgs(2),
+	Run: func(cmd *cobra.Command, args []string) {
+		prefixName := args[0]
+		appName := args[1]
+
+		prefixPath := prefix.Path(prefixName)
+
+		err := appstore.DeleteApp(prefixPath, appName)
+		if err != nil {
+			fmt.Println("ERROR:", err)
+			return
+		}
+
+		fmt.Println("App deleted:", appName)
+	},
 }
 
 func init() {

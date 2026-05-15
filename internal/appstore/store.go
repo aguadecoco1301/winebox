@@ -5,6 +5,7 @@ package appstore
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 )
@@ -71,13 +72,13 @@ func AddApp(prefixDir, name, path string) error {
 	return Save(prefixDir, data)
 }
 
-func SetMain(prefixDir, name string) error {
+func SetMain(prefixDir, path string) error {
 	data, err := Load(prefixDir)
 	if err != nil {
 		return err
 	}
 
-	data.Main = name
+	data.Main = path
 
 	return Save(prefixDir, data)
 }
@@ -107,16 +108,53 @@ func GetApp(prefixDir, name string) (App, bool, error) {
 	return app, ok, nil
 }
 
-func GetMainApp(prefixDir, name string) (App, bool, error) {
+func EditApp(prefixDir, oldName, newName, newPath string) error {
 	data, err := Load(prefixDir)
 	if err != nil {
-		return App{}, false, err
+		return err
 	}
 
-	if data.Main == "" {
-		return App{}, false, nil
+	app, ok := data.Apps[oldName]
+	if !ok {
+		return fmt.Errorf("app not found: %s", oldName)
 	}
 
-	app, ok := data.Apps[data.Main]
-	return app, ok, nil
+	delete(data.Apps, oldName)
+
+	if newName == "" {
+		newName = oldName
+	}
+
+	if newPath != "" {
+		app.Path = newPath
+	}
+
+	data.Apps[newName] = app
+
+	if data.Main == oldName {
+		data.Main = newName
+	}
+
+	return Save(prefixDir, data)
+}
+
+func (d Data) GetMainApp() (App, error) {
+	if d.Main == "" {
+		return App{}, fmt.Errorf("no main app defined")
+	}
+
+	return App{Path: d.Main}, nil
+}
+
+func (d Data) Resolve(name string) (App, error) {
+	if name == "" {
+		return d.GetMainApp()
+	}
+
+	app, ok := d.Apps[name]
+	if !ok {
+		return App{}, fmt.Errorf("app not found: %s", name)
+	}
+
+	return app, nil
 }
