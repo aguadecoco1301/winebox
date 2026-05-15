@@ -6,6 +6,7 @@ package cmd
 import (
 	"fmt"
 	"path/filepath"
+	"strings"
 	"unicode"
 
 	"github.com/spf13/cobra"
@@ -24,10 +25,12 @@ var createCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		prefixName := args[0]
+		prefixName = filepath.Clean(prefixName)
 		prefixName = filepath.Base(prefixName)
 
 		if prefixName == "." || prefixName == ".." {
 			fmt.Println("ERROR: invalid prefix name")
+			cmd.Help()
 			return
 		}
 
@@ -39,49 +42,69 @@ var createCmd = &cobra.Command{
 		)
 		prefixName, _, _ = transform.String(t, prefixName) // Aplica la transformación y descarta numero y error
 
-		var suggestedName string
-		var isUsedCorrectCharacters bool = true
+		var suggestedName strings.Builder
+		hasInvalidCharacters := false
 
-		flags, err := cmd.Flags().GetBool("allow-unsafe-name")
+		isAllowed := func(r rune) bool {
+			return (r >= 'a' && r <= 'z') ||
+				(r >= 'A' && r <= 'Z') ||
+				(r >= '0' && r <= '9') ||
+				r == '-' || r == '.'
+		}
+
+		allowUnsafe, err := cmd.Flags().GetBool("allow-unsafe-name")
 		if err != nil {
-			fmt.Println("Error:", err)
+			fmt.Println("ERROR:", err)
+			return
 		}
 
-		if flags == false {
-			isAllowedCharacters := func(r byte) bool {
-				return r >= 'a' && r <= 'z' || r >= 'A' && r <= 'Z' || r >= '0' && r <= '9' || r == '-' || r == '.'
+		for _, char := range prefixName {
+
+			// espacios siempre se normalizan
+			if char == ' ' {
+				char = '-'
+				hasInvalidCharacters = true
 			}
 
-			for i := 0; i < len(prefixName); i++ {
-				char := prefixName[i]
-				if char == ' ' {
-					char = '-'
-					isUsedCorrectCharacters = false
-				}
-
-				if isAllowedCharacters(char) {
-					suggestedName += string(char)
-				} else {
-					isUsedCorrectCharacters = false
-				}
-			}
-		} else {
-			fmt.Println("WARNING: Using an unsafe name may cause Wine issues")
-			suggestedName = prefixName
-		}
-
-		if isUsedCorrectCharacters {
-			fmt.Println("Creating new prefix:", suggestedName) // Reemplazo de la creación del prefix
-			err := prefix.CreatePrefix(suggestedName)
-			if err != nil {
-				fmt.Println("ERROR: Failed to create prefix:", err)
-			}
-		} else {
-			if suggestedName != "" && len(suggestedName) >= 2 {
-				fmt.Println("ERROR: You entered an unsafe name. No action will be taken.\nIf you know what you are doing, check 'winebox create --help'.\nSuggested safe name:\n", suggestedName)
+			if isAllowed(char) {
+				suggestedName.WriteRune(char)
 			} else {
-				fmt.Println("ERROR: You entered an unsafe name. No action will be taken.\nIf you know what you are doing, check 'winebox create --help'.\nPlease use at least two of letters, numbers, '-' or '.'. ")
+				hasInvalidCharacters = true
+
+				// si NO es unsafe, se ignora silenciosamente en sanitización
+				// si es unsafe, igual lo dejamos pasar pero avisamos
+				if allowUnsafe {
+					suggestedName.WriteRune(char)
+				}
 			}
+		}
+
+		finalName := suggestedName.String()
+
+		if len(finalName) == 0 {
+			fmt.Println("ERROR: empty or invalid prefix name")
+			cmd.Help()
+			return
+		}
+
+		// CASO 1: se usó allow-unsafe-name
+		if allowUnsafe && hasInvalidCharacters {
+			fmt.Println("WARNING: using unsafe prefix name. This may cause issues in Wine.")
+		}
+
+		// CASO 2: hubo sanitización (NO se permite)
+		if hasInvalidCharacters && !allowUnsafe {
+			fmt.Println("ERROR: prefix name contains invalid characters")
+			fmt.Println("Suggested safe name:", finalName)
+			cmd.Help()
+			return
+		}
+
+		fmt.Println("Creating new prefix:", finalName)
+
+		err = prefix.CreatePrefix(finalName)
+		if err != nil {
+			fmt.Println("ERROR: Failed to create prefix:", err)
 		}
 	},
 }
@@ -89,13 +112,5 @@ var createCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(createCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	//createCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
 	createCmd.Flags().BoolP("allow-unsafe-name", "a", false, "Allows any character in the prefix name. May cause errors with Wine.")
 }
