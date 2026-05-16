@@ -4,8 +4,8 @@ v1
 - [x] abrir shell dentro del wineprefix
 - [x] añadir ejecutable principal
   - [x] añadir sub aplicaciones
-- [ ] correr aplicaciones y sub aplicaciones
-- [ ] listar prefixes y subapps
+- [x] correr aplicaciones y sub aplicaciones
+- [x] listar prefixes y subapps
 
 v1.1
 - [ ] sort list
