@@ -11,6 +11,7 @@ import (
 
 	"github.com/aguadecoco1301/winebox/internal/appstore"
 	"github.com/aguadecoco1301/winebox/internal/prefix"
+	"github.com/aguadecoco1301/winebox/internal/sanitize"
 	"github.com/spf13/cobra"
 )
 
@@ -71,19 +72,49 @@ The <path> is the executable path inside the prefix or relative to it.`,
 
 		absPath, err := filepath.Abs(appPath)
 		if err != nil {
+			fmt.Println("ERROR:", err)
 			return
 		}
 		absPath = filepath.Clean(absPath)
 
 		prefixPath := prefix.Path(prefixName)
 
-		err = appstore.AddApp(prefixPath, appName, absPath)
+		allowUnsafe, err := cmd.Flags().GetBool("allow-unsafe-name")
 		if err != nil {
 			fmt.Println("ERROR:", err)
 			return
 		}
 
-		fmt.Println("App added:", appName)
+		finalName, hasInvalidCharacters, err := sanitize.Name(appName, allowUnsafe)
+		if err != nil {
+			fmt.Println("ERROR:", err)
+			return
+		}
+
+		if len(finalName) == 0 {
+			fmt.Println("ERROR: empty or invalid app name")
+			return
+		}
+
+		// CASO 1: uso de allow-unsafe-name
+		if allowUnsafe && hasInvalidCharacters {
+			fmt.Println("WARNING: using unsafe app name. This may cause issues.")
+		}
+
+		// CASO 2: caracteres invalidos
+		if hasInvalidCharacters && !allowUnsafe {
+			fmt.Println("ERROR: app name contains invalid characters")
+			fmt.Println("Suggested safe name:", finalName)
+			return
+		}
+
+		err = appstore.AddApp(prefixPath, finalName, absPath)
+		if err != nil {
+			fmt.Println("ERROR:", err)
+			return
+		}
+
+		fmt.Println("App added:", finalName)
 	},
 }
 
@@ -104,17 +135,47 @@ You can change both the alias name and the executable path.`,
 
 		absPath, err := filepath.Abs(newPath)
 		if err != nil {
+			fmt.Println("ERROR:", err)
 			return
 		}
 		absPath = filepath.Clean(absPath)
 
-		err = appstore.EditApp(prefixPath, oldName, newName, absPath)
+		allowUnsafe, err := cmd.Flags().GetBool("allow-unsafe-name")
 		if err != nil {
 			fmt.Println("ERROR:", err)
 			return
 		}
 
-		fmt.Println("App updated:", oldName)
+		finalName, hasInvalidCharacters, err := sanitize.Name(newName, allowUnsafe)
+		if err != nil {
+			fmt.Println("ERROR:", err)
+			return
+		}
+
+		if len(finalName) == 0 {
+			fmt.Println("ERROR: empty or invalid app name")
+			return
+		}
+
+		// CASO 1: Se usó allow-unsafe-name
+		if allowUnsafe && hasInvalidCharacters {
+			fmt.Println("WARNING: using unsafe app name. This may cause issues.")
+		}
+
+		// CASO 2: hubo caracteres invalidos (no se permite)
+		if hasInvalidCharacters && !allowUnsafe {
+			fmt.Println("ERROR: app name contains invalid characters")
+			fmt.Println("Suggested safe name:", finalName)
+			return
+		}
+
+		err = appstore.EditApp(prefixPath, oldName, finalName, absPath)
+		if err != nil {
+			fmt.Println("ERROR:", err)
+			return
+		}
+
+		fmt.Println("App updated:", oldName, ">", finalName)
 	},
 }
 
@@ -149,4 +210,7 @@ func init() {
 	appCmd.AddCommand(appAddCmd)
 	appCmd.AddCommand(appEditCmd)
 	appCmd.AddCommand(appDeleteCmd)
+
+	appEditCmd.Flags().BoolP("allow-unsafe-name", "a", false, "Allows any characters in the app name. May cause issues.")
+	appAddCmd.Flags().BoolP("allow-unsafe-name", "a", false, "Allows any characters in the app name. May cause issues.")
 }
