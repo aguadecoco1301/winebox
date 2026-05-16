@@ -32,6 +32,7 @@ var runCmd = &cobra.Command{
 
 		if _, err := os.Stat(prefixPath); err != nil {
 			fmt.Println("ERROR: prefix does not exists")
+			return
 		}
 
 		store, err := appstore.Load(prefixPath)
