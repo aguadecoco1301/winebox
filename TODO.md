@@ -13,6 +13,8 @@ v1.1
 - [ ] editar prefixes (nombres, ubicacion, etc)
 - [ ] cache de Size()
 - [ ] list por prefix 'winebox list prefix'
+- [ ] fix: no permitir app add, edit, main de un archivo inexistente
+- [ ] fix: no permitir añadir apps duplicadas
 
 v1.2
 - [ ] colores
