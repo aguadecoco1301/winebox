@@ -8,14 +8,14 @@ v1
 - [x] listar prefixes y subapps
 
 v1.1
-- [ ] sort list
 - [ ] generar .desktop
 - [ ] editar prefixes (nombres, ubicacion, etc)
-- [ ] cache de Size()
 - [ ] list por prefix 'winebox list prefix'
+- [ ] sort list
 - [ ] fix: no permitir app add, edit, main de un archivo inexistente
 - [ ] fix: no permitir añadir apps duplicadas
 
 v1.2
+- [ ] cache de Size()
 - [ ] colores
 - [ ] completions
