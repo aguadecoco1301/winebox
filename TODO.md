@@ -8,6 +8,7 @@ v1
 - [x] listar prefixes y subapps
 
 v1.1
+- [x] Makefiles
 - [ ] generar .desktop
 - [ ] editar prefixes (nombres, ubicacion, etc)
 - [ ] list por prefix 'winebox list prefix'
