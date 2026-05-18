@@ -12,11 +12,11 @@ v1.1
 - [ ] generar .desktop
 - [ ] editar prefixes (nombres, ubicacion, etc)
 - [ ] list por prefix 'winebox list prefix'
-- [ ] sort list
 - [ ] fix: no permitir app add, edit, main de un archivo inexistente
 - [ ] fix: no permitir añadir apps duplicadas
 
 v1.2
 - [ ] cache de Size()
+- [ ] sort list
 - [ ] colores
 - [ ] completions
