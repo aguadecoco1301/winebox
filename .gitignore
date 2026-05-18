@@ -33,3 +33,4 @@ go.work.sum
 
 # Build folder
 build/
+dist/
