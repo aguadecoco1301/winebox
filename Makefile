@@ -9,7 +9,7 @@ build:
 run:
 	go run . $(ARGS)
 
-install: build
+install:
 	install -Dm755 $(BINARY) $(PREFIX)/bin/$(BINARY)
 
 uninstall: 
