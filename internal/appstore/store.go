@@ -24,7 +24,7 @@ func Load(prefixDir string) (Data, error) {
 	if err != nil {
 		return Data{
 			Apps: make(map[string]App),
-		}, nil
+		}, err
 	}
 	defer file.Close()
 
