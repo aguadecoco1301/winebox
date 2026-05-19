@@ -59,6 +59,8 @@ var runCmd = &cobra.Command{
 		wineCmd := exec.Command("wine", app.Path)
 		wineCmd.Env = append(os.Environ(), "WINEPREFIX="+prefixPath)
 
+		wineCmd.Dir = filepath.Dir(app.Path)
+
 		wineCmd.Stdin = os.Stdin
 		wineCmd.Stdout = os.Stdout
 		wineCmd.Stderr = os.Stderr
