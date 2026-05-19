@@ -9,6 +9,8 @@ v1
 
 v1.1
 - [x] Makefiles
+- [ ] flags de wine (MANGOHUD ej)
+- [ ] completions
 - [ ] generar .desktop
 - [ ] fix: winebox run tarda mucho, al no estar en el mismo directorio.
 - [ ] editar prefixes (nombres, ubicacion, etc)
@@ -20,4 +22,3 @@ v1.2
 - [ ] cache de Size()
 - [ ] sort list
 - [ ] colores
-- [ ] completions
