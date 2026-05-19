@@ -10,6 +10,7 @@ v1
 v1.1
 - [x] Makefiles
 - [ ] generar .desktop
+- [ ] fix: winebox run tarda mucho, al no estar en el mismo directorio.
 - [ ] editar prefixes (nombres, ubicacion, etc)
 - [ ] list por prefix 'winebox list prefix'
 - [ ] fix: no permitir app add, edit, main de un archivo inexistente
