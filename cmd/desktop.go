@@ -5,8 +5,11 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
+	"github.com/aguadecoco1301/winebox/internal/appstore"
 	"github.com/aguadecoco1301/winebox/internal/desktop"
+	"github.com/aguadecoco1301/winebox/internal/prefix"
 	"github.com/spf13/cobra"
 )
 
@@ -30,6 +33,16 @@ var desktopGenerateCmd = &cobra.Command{
 
 		if len(args) == 2 {
 			appName = args[1]
+
+			if _, err := appstore.Load(appName); err != nil {
+				fmt.Println("ERROR: app does not exists")
+				return
+			}
+		}
+
+		if _, err := os.Stat(prefix.Path(prefixName)); err != nil {
+			fmt.Println("ERROR: prefix does not exists")
+			return
 		}
 
 		execCommand := "winebox run " + prefixName
@@ -54,6 +67,8 @@ var desktopGenerateCmd = &cobra.Command{
 		if err != nil {
 			fmt.Println("ERROR:", err)
 		}
+
+		fmt.Println(content)
 	},
 }
 
