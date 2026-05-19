@@ -27,6 +27,8 @@ func Write(fileName string, content string) error {
 		return err
 	}
 
+	os.Chmod(desktopPath, 0755)
+
 	fmt.Println("Desktop entry generated:", desktopPath)
 	return nil
 }
