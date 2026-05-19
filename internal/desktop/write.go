@@ -17,6 +17,11 @@ func Write(fileName string, content string) error {
 
 	desktopPath := filepath.Join(home, ".local", "share", "applications", fileName)
 
+	err = os.MkdirAll(filepath.Dir(desktopPath), 0755)
+	if err != nil {
+		return err
+	}
+
 	err = os.WriteFile(desktopPath, []byte(content), 0644)
 	if err != nil {
 		return err
