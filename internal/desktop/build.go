@@ -6,7 +6,7 @@ package desktop
 import "fmt"
 
 func Build(entry Entry) string {
-	return fmt.Sprintf(`[Desktop entry]
+	return fmt.Sprintf(`[Desktop Entry]
 Name=%s
 Exec=%s
 Type=Application
